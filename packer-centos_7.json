@@ -1,0 +1,49 @@
+{
+ "provisioners": [
+    {
+      "type": "shell",
+      "scripts": "scripts/base.sh"
+    },
+    {
+      "type": "file",
+      "source": "keys/jay_id_rsa.pub",
+      "destination": "/home/jayjay/.ssh/authorized_keys"
+    },
+    {
+      "type": "shell",
+      "scripts": "scripts/cleanup.sh"
+    }
+    ],
+
+ "variables": {
+      "iso": "/Users/jolinares/Downloads/CentOS-7-x86_64-DVD-1708.iso",
+      "checksum": "82b4160df8d2a360f0f38432ad7e049b"  
+       },
+
+ "builders": [
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "{{ user `iso` }}",
+      "iso_checksum": "{{ user `checksum` }}",
+      "iso_checksum_type": "md5",
+      "vm_name": "centos_7.local",
+      "guest_os_type": "RedHat_64",
+      "ssh_username": "root",
+      "ssh_password": "notPlainP4SS",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "600s",
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "2048"],
+        ["modifyvm", "{{.Name}}", "--cpus", "2"],
+        ["modifyvm", "{{.Name}}", "--audio", "none"]
+      ],
+      "disk_size": "20480",
+      "http_directory": "http",
+      "post_shutdown_delay": "60s",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos_ks.cfg<enter><wait>"
+      ],
+      "shutdown_command": "shutdown -P now"
+    }
+  ]
+}

@@ -1,2 +1,2 @@
 # packer
-Building automated golden images
+Building automated golden images.
